@@ -1,0 +1,48 @@
+{
+    "model_version": "1.0.0",
+    "model_type": "HistGradientBoostingClassifier",
+    "training_timestamp": "2026-02-14T14:34:17.212777",
+    "dataset_rows": 40000,
+    "dataset_columns": 14,
+    "target_column": "y",
+    "excluded_columns": [
+        "duration",
+        "month",
+        "day"
+    ],
+    "categorical_features": [
+        "job",
+        "marital",
+        "education",
+        "default",
+        "housing",
+        "loan",
+        "contact"
+    ],
+    "numeric_features": [
+        "age",
+        "balance",
+        "campaign"
+    ],
+    "class_distribution": {
+        "no": 0.9276,
+        "yes": 0.0724
+    },
+    "cv_train_metrics": {
+        "accuracy": 0.6781062500000001,
+        "precision": 0.13976710279650348,
+        "recall": 0.6683369075758288,
+        "f1": 0.23117457252212992
+    },
+    "cv_validation_metrics": {
+        "accuracy": 0.6620999999999999,
+        "precision": 0.11481359769493275,
+        "recall": 0.5462765767375379,
+        "f1": 0.18973137410034902
+    },
+    "hyperparameters": {
+        "learning_rate": 0.05,
+        "max_iter": 300,
+        "random_state": 42
+    }
+}
