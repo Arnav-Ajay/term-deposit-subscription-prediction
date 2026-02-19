@@ -1,105 +1,164 @@
-# 📌 Term Deposit Marketing – Modeling & Analysis
+# 📌 Term Deposit Marketing – Customer Targeting Model
 
-## Project Overview
+## 📖 Project Overview
 
-This project builds a machine learning system to predict whether a customer will subscribe to a term deposit product, based on historical marketing campaign data from a European banking institution.
+This project develops a machine learning system to predict whether a customer will subscribe to a term deposit product based on historical call center marketing data from a European banking institution.
 
-The objectives are:
+The business objective is:
 
-* Achieve ≥ 81% accuracy using 5-fold cross-validation.
-* Identify customer segments most likely to subscribe.
-* Determine the key features driving subscription decisions.
-* Provide a model suitable for marketing targeting and ranking.
+> 🎯 **Rank customers by likelihood of subscription and maximize marketing efficiency.**
+
+Although the original success metric required ≥81% accuracy, this dataset is highly imbalanced (only 7.24% positive class). Therefore, the final model is evaluated primarily using:
+
+* **Lift**
+* **Top-Decile Capture Rate**
+* **ROC-AUC**
+
+These metrics better reflect real-world marketing performance than raw accuracy.
 
 ---
 
-# 📊 Dataset Description
+# 📊 Dataset Summary
 
-The dataset contains 40,000 customer records from direct marketing campaigns.
+* **40,000 customer records**
+* Binary target variable: `y` (yes/no)
+* Severe class imbalance:
 
-### Key Feature Groups:
+  * 92.76% "No"
+  * 7.24% "Yes"
 
-* **Demographics:** age, job, marital, education
-* **Financial status:** balance, default, housing loan, personal loan
-* **Campaign info:** contact type, day, month, duration, campaign count
-* **Target variable:** `y` (subscribed: yes/no)
+## Feature Groups
 
-Class imbalance:
+**Demographics**
 
-* 92.76% "no"
-* 7.24% "yes"
+* age
+* job
+* marital
+* education
+
+**Financial**
+
+* balance
+* default
+* housing loan
+* personal loan
+
+**Campaign**
+
+* contact type
+* campaign count
+* month
+* day
+* duration
+
+---
+
+## ⚠ Data Leakage Consideration
+
+The feature **`duration` (call length)** is only known *after* a call has started. Including it would result in post-outcome prediction rather than realistic pre-call targeting.
+
+Therefore:
+
+> ✅ `duration` was excluded from the final production model.
+
+This ensures the system can be used **before making calls**, which aligns with the real marketing objective.
 
 ---
 
 # 🧠 Modeling Strategy
 
-We approached the problem in two ways:
+Multiple models were evaluated:
 
-## 1️⃣ Post-Call Outcome Prediction (Including Duration)
+* Logistic Regression
+* Decision Trees
+* Random Forest
+* HistGradientBoostingClassifier
 
-Includes all features.
-
-This predicts whether a customer will subscribe *after a call has already started*.
-
-## 2️⃣ Pre-Call Customer Targeting (Excluding Duration)
-
-Excludes `duration` (since call duration is unknown before calling).
-
-This is the realistic marketing targeting model.
-
----
-
-# 📈 Evaluation Approach
-
-Given heavy class imbalance, we evaluated models using:
+Given class imbalance and the ranking objective, models were evaluated using:
 
 * Accuracy
-* Precision
-* Recall
-* F1 Score
+* Precision / Recall / F1
+* ROC-AUC
 * Gains Chart
-* Lift (Top Decile Capture Rate)
+* Lift
 
-We used **5-fold Stratified Cross-Validation** for robustness.
-
-Marketing-relevant metric:
-
-> Top 10% capture rate (Lift)
+We used **5-fold Stratified Cross-Validation** to ensure robustness.
 
 ---
 
-# 🏆 Model Comparison Summary
+# 🏆 Final Production Model
 
-## A. WITH Duration (Post-Call Prediction)
+### Selected Model:
 
-| Model                | Test Accuracy | Test F1 | Top 10% Buyers Captured |
-| -------------------- | ------------- | ------- | ----------------------- |
-| Logistic Regression  | ~86.8%        | ~0.49   | 64.5%                   |
-| Decision Tree        | ~87.4%        | ~0.50   | 66.6%                   |
-| HistGradientBoosting | ~93.9%        | ~0.51   | **77.3%**               |
+**HistGradientBoostingClassifier**
 
-🔎 **Key Insight:**
-Call duration is the strongest predictor of subscription.
+### Why Gradient Boosting?
+
+* Captures non-linear feature interactions
+* Strong ranking performance
+* Stable cross-validation ROC-AUC
+* Superior Lift compared to linear models
+* Handles categorical encoding via pipeline
 
 ---
 
-## B. WITHOUT Duration (Real Targeting Model)
+# 📈 Final Model Performance (5-Fold CV)
 
-| Model                | Test Accuracy | Test F1 | Top 10% Buyers Captured |
-| -------------------- | ------------- | ------- | ----------------------- |
-| Logistic Regression  | ~66.6%        | ~0.21   | 31.6%                   |
-| Decision Tree        | ~61.7%        | ~0.19   | 28.8%                   |
-| HistGradientBoosting | ~92.7%        | ~0.07*  | **44.1%**               |
+### Mean ROC-AUC:
 
-(*Low recall due to conservative threshold; ranking performance is strong.)
+```
+0.7193
+```
 
-🔎 **Key Insight:**
-Gradient Boosting significantly outperforms linear models in ranking customers.
+While raw accuracy is high due to class imbalance, ROC-AUC and Lift provide a more realistic evaluation of marketing effectiveness.
+
+---
+
+# 🚀 Lift Analysis (Primary Business Metric)
+
+```
+------ Lift Analysis ------
+
+Top 10%:
+  Capture Rate: 0.3661
+  Lift: 3.66
+
+Top 20%:
+  Capture Rate: 0.4888
+  Lift: 2.44
+
+Top 30%:
+  Capture Rate: 0.5955
+  Lift: 1.98
+
+Top 50%:
+  Capture Rate: 0.7528
+  Lift: 1.51
+```
+
+---
+
+## 🎯 Interpretation
+
+If the marketing team targets:
+
+* **Top 10% of ranked customers**
+* They capture **36.6% of all actual subscribers**
+
+Since only 7.24% of customers subscribe overall:
+
+* Random 10% targeting → ~7.24% capture
+* Model Top 10% → 36.6% capture
+
+This represents:
+
+> 🔥 **3.66× improvement over random targeting**
+
+This is a substantial increase in marketing efficiency.
 
 ---
 
 # 📊 Gains Analysis
-
 
 <table>
 <tr>
@@ -120,77 +179,146 @@ Gradient Boosting significantly outperforms linear models in ranking customers.
 </tr>
 </table>
 
-### With Duration:
-
-* Top 10% captures 77% of buyers.
-* Top 20% captures ~97%.
-
-### Without Duration:
-
-* Top 10% captures 44% of buyers.
-* Top 20% captures ~60%.
-
-This demonstrates strong targeting capability.
+The final model (excluding duration) provides strong ranking ability while remaining production-realistic.
 
 ---
 
-# 🔍 Feature Importance Insights
-
-Using permutation importance:
-
-## Most Influential Features (Without Duration)
-
-* Month (seasonality effect)
-* Campaign count
-* Balance / balance bin
-* Contact type
-* Marital status
-* Loan / housing status
-
-## With Duration
-
-* Duration dominates prediction.
-* Followed by month and contact variables.
-
----
-
-# 🎯 Business Recommendations
-
-## 1️⃣ Targeting Strategy (Pre-Call)
-
-Use Gradient Boosting model (without duration) to:
-
-* Rank customers by predicted probability.
-* Target top 10–20% highest ranked customers.
-* Expect 3–6× improvement over random targeting.
-
-## 2️⃣ Campaign Optimization
+# 🔍 Key Business Insights
 
 Customers more likely to subscribe:
 
-* Contacted during specific months (seasonality effect).
-* With higher account balances.
-* With fewer previous campaign contacts.
-* Without active housing or personal loans.
+* Higher account balance
+* Lower number of previous campaign contacts
+* Certain marital profiles
+* Contacted via cellular
+* Seasonality effects observed in specific months
+
+### Practical Strategy:
+
+Focus calling efforts on the top 10–20% ranked customers for maximum ROI.
+
+---
+
+# 🎯 Addressing the 81% Accuracy Requirement
+
+The original success metric required ≥81% accuracy.
+
+However, due to severe class imbalance:
+
+* A naïve model predicting all "No" would already achieve ~92.76% accuracy.
+* Therefore, accuracy alone is not an appropriate metric.
+
+Instead, Lift and ROC-AUC were prioritized as they better measure:
+
+* Customer ranking quality
+* Marketing efficiency
+* Business impact
+
+---
+
+# 🏗 Production Implementation
+
+The final system uses a full preprocessing + modeling pipeline.
+
+### Pipeline Components:
+
+* `ColumnTransformer`
+* `OneHotEncoder`
+* `HistGradientBoostingClassifier`
+
+This ensures:
+
+* Consistent preprocessing at inference
+* Safe handling of unseen categories
+* No feature mismatch
+* Reproducible training
+
+---
+
+# 📦 Saved Artifacts
+
+```
+models/
+├── hgb_model.joblib
+├── metadata.json
+```
+
+Metadata includes:
+
+* Model version
+* Hyperparameters
+* CV metrics
+* Feature lists
+* Class distribution
+
+---
+
+# 🧪 Scripts
+
+## Train Model
+
+```
+python src/train.py
+```
+
+Outputs:
+
+* 5-fold CV metrics
+* ROC-AUC
+* Lift analysis
+* Saved model + metadata
+
+---
+
+## Generate Predictions
+
+```
+python src/predict.py --save_output
+```
+
+Supports:
+
+* CSV input
+* Excel input
+* Custom classification threshold
+
+Outputs:
+
+* Predicted probability
+* Predicted label
+
+---
+
+## Identify Target Segment
+
+```
+python src/target_segment.py
+```
+
+Returns:
+
+* Top 10% customer list for marketing prioritization
 
 ---
 
 # 📦 Repository Structure
 
 ```
-├── data/ # due to company policy, the dataset is not available for public consumption.
+├── data/       # Dataset not publicly available (privacy restrictions)
 ├── notebooks/
 │   ├── 01_eda.ipynb
-│   ├── 02_modeling.ipynb
+│   ├── 02_base_model.ipynb
+│   ├── 03_modeling.ipynb
 ├── src/
+│   ├── hyper_param_tuning.py
 │   ├── train.py
 │   ├── predict.py
-│   ├── utils.py
+│   ├── target_segment.py
+├── models/
+│   ├── hgb_model.joblib
+│   ├── metadata.json
 ├── README.md
+├── requirements.txt
 ```
-
-EDA and experimentation are documented in notebooks.
-
-Final production training and inference code will be implemented under `src/`.
 
 ---
