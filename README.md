@@ -1,6 +1,6 @@
 # Term Deposit Marketing – Customer Targeting Model
 
-## 📖 Project Overview
+## Project Overview
 
 This project develops a machine learning system to predict whether a customer will subscribe to a term deposit product based on historical call center marketing data from a European banking institution.
 
