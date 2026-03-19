@@ -1,4 +1,4 @@
-# 📌 Term Deposit Marketing – Customer Targeting Model
+# Term Deposit Marketing – Customer Targeting Model
 
 ## 📖 Project Overview
 
@@ -6,7 +6,7 @@ This project develops a machine learning system to predict whether a customer wi
 
 The business objective is:
 
-> 🎯 **Rank customers by likelihood of subscription and maximize marketing efficiency.**
+> **Rank customers by likelihood of subscription and maximize marketing efficiency.**
 
 Although the original success metric required ≥81% accuracy, this dataset is highly imbalanced (only 7.24% positive class). Therefore, the final model is evaluated primarily using:
 
@@ -18,7 +18,7 @@ These metrics better reflect real-world marketing performance than raw accuracy.
 
 ---
 
-# 📊 Dataset Summary
+# Dataset Summary
 
 * **40,000 customer records**
 * Binary target variable: `y` (yes/no)
@@ -53,19 +53,19 @@ These metrics better reflect real-world marketing performance than raw accuracy.
 
 ---
 
-## ⚠ Data Leakage Consideration
+## Data Leakage Consideration
 
 The feature **`duration` (call length)** is only known *after* a call has started. Including it would result in post-outcome prediction rather than realistic pre-call targeting.
 
 Therefore:
 
-> ✅ `duration` was excluded from the final production model.
+> `duration` was excluded from the final production model.
 
 This ensures the system can be used **before making calls**, which aligns with the real marketing objective.
 
 ---
 
-# 🧠 Modeling Strategy
+# Modeling Strategy
 
 Multiple models were evaluated:
 
@@ -86,7 +86,7 @@ We used **5-fold Stratified Cross-Validation** to ensure robustness.
 
 ---
 
-# 🏆 Final Production Model
+# Final Production Model
 
 ### Selected Model:
 
@@ -102,7 +102,7 @@ We used **5-fold Stratified Cross-Validation** to ensure robustness.
 
 ---
 
-# 📈 Final Model Performance (5-Fold CV)
+# Final Model Performance (5-Fold CV)
 
 ### Mean ROC-AUC:
 
@@ -114,7 +114,7 @@ While raw accuracy is high due to class imbalance, ROC-AUC and Lift provide a mo
 
 ---
 
-# 🚀 Lift Analysis (Primary Business Metric)
+# Lift Analysis (Primary Business Metric)
 
 ```
 ------ Lift Analysis ------
@@ -138,7 +138,7 @@ Top 50%:
 
 ---
 
-## 🎯 Interpretation
+## Interpretation
 
 If the marketing team targets:
 
@@ -152,13 +152,13 @@ Since only 7.24% of customers subscribe overall:
 
 This represents:
 
-> 🔥 **3.66× improvement over random targeting**
+> **3.66× improvement over random targeting**
 
 This is a substantial increase in marketing efficiency.
 
 ---
 
-# 📊 Gains Analysis
+# Gains Analysis
 
 <table>
 <tr>
@@ -183,7 +183,7 @@ The final model (excluding duration) provides strong ranking ability while remai
 
 ---
 
-# 🔍 Key Business Insights
+# Key Business Insights
 
 Customers more likely to subscribe:
 
@@ -199,7 +199,7 @@ Focus calling efforts on the top 10–20% ranked customers for maximum ROI.
 
 ---
 
-# 🎯 Addressing the 81% Accuracy Requirement
+# Addressing the 81% Accuracy Requirement
 
 The original success metric required ≥81% accuracy.
 
@@ -216,7 +216,7 @@ Instead, Lift and ROC-AUC were prioritized as they better measure:
 
 ---
 
-# 🏗 Production Implementation
+# Production Implementation
 
 The final system uses a full preprocessing + modeling pipeline.
 
@@ -235,7 +235,7 @@ This ensures:
 
 ---
 
-# 📦 Saved Artifacts
+# Saved Artifacts
 
 ```
 models/
@@ -253,7 +253,7 @@ Metadata includes:
 
 ---
 
-# 🧪 Scripts
+# Scripts
 
 ## Train Model
 
@@ -301,7 +301,7 @@ Returns:
 
 ---
 
-# 📦 Repository Structure
+# Repository Structure
 
 ```
 ├── data/       # Dataset not publicly available (privacy restrictions)
